@@ -2,17 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LevelData : MonoBehaviour
+[System.Serializable]
+public class LevelData
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public char[,] boggle;
+    public List<Vector2> bugLocations = new List<Vector2>();
+    public List<string> wordsInBoggle = new List<string>();
 }

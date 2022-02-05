@@ -2,7 +2,9 @@ using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GlobalActionManager : MonoBehaviour
 {
@@ -18,6 +20,11 @@ public class GlobalActionManager : MonoBehaviour
     /// </summary>
     public List<string> possibleWords = new List<string>();
 
+    public List<string> userWordsFound = new List<string>();
+
+    public TextMeshProUGUI scoreText;
+
+    public int globalscore = 0;
     public string candidate;
 	private void Awake()
 	{
@@ -77,13 +84,42 @@ public class GlobalActionManager : MonoBehaviour
 	{
         candidate = string.Join("",charArray);
         Debug.Log("Candidate String : " + candidate);
-        
+        CallForCompare(candidate);
 	}
 
 
     public void CallForCompare(string candidateString)
 	{
+        if(WordStorer.instance.wordExists(candidateString.ToLower()) && candidateString.Length > 2)
+		{
+            if(!userWordsFound.Contains(candidateString))
+			{
+                scoreText.text = "Score : " + GetScore(candidateString).ToString();
+                userWordsFound.Add(candidateString);
+            }
+            else
+			{
+                Debug.Log("Word already found");
+			}
+		}
+        else
+		{
+            Debug.Log("Word doesn't exist");
+		}
         //Compare word
         //Assign score if found
 	}
+
+    public int GetScore(string candidate)
+	{
+        //int score = candidate.Length;
+        globalscore += candidate.Length;//multiply by bugCount
+        return globalscore;
+	}
+
+    public void BackToMenu()
+	{
+        SceneManager.LoadScene(0);
+	}
+
 }

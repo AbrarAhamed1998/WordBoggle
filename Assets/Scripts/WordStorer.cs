@@ -5,6 +5,7 @@ using System.IO;
 using System;
 using System.Linq;
 using UnityEngine.UI;
+using NUnit.Framework.Internal.Execution;
 
 public class WordStorer : MonoBehaviour
 {
@@ -12,6 +13,9 @@ public class WordStorer : MonoBehaviour
     public List<GeneralWord> wordGroups = new List<GeneralWord>(6);
     string generalPath;
     public bool collectingWords;
+    public TextAsset wordfile;
+    string fullFileString;
+    List<string> rawWordList = new List<string>();
 	private void Awake()
 	{
         if (instance != null)
@@ -40,6 +44,9 @@ public class WordStorer : MonoBehaviour
 
     public IEnumerator GenerateGeneralWordList()
 	{
+        fullFileString = wordfile.text;
+        string[] words = fullFileString.Split("\n"[0]);
+        rawWordList = words.ToList();
         collectingWords = true;
         Debug.Log("Started collecting words from resources");
         for (int i = 0; i < 6; i++)
@@ -95,6 +102,7 @@ public class WordStorer : MonoBehaviour
         TextAsset tempFile;
         string tempString;
         string[] tempStringArray;
+        alphabetList.Clear();
         for (int alphabet = 0; alphabet < 26; alphabet++)
         {
             Debug.Log(generalPath + "/" + Convert.ToChar(alphabet + (int)'a').ToString());
@@ -110,9 +118,9 @@ public class WordStorer : MonoBehaviour
     public bool wordExists(string candidate)
 	{
         bool exists = false;
-        int startLetterIndex = FindStartLetterIndex(candidate);
-        
-        switch(candidate.Length)
+        //int startLetterIndex = FindStartLetterIndex(candidate);
+        //Debug.Log("start letter index " + startLetterIndex + "  and letter " + Convert.ToChar(startLetterIndex + (int)'a').ToString() + " and string length is " + candidate.Length);
+        /*switch(candidate.Length)
 		{
             case 3:
                 exists = wordGroups[0].SearchWordInList(candidate, startLetterIndex);
@@ -132,13 +140,18 @@ public class WordStorer : MonoBehaviour
             case 8:
                 exists = wordGroups[5].SearchWordInList(candidate, startLetterIndex);
                 break;
-        }
+        }*/
+        if(rawWordList.Contains(candidate))
+		{
+            exists = true;
+		}
         return exists;
 	}
 
     public int FindStartLetterIndex(string str)
 	{
         int startIndex = 0;
+        Debug.Log("finding start letter index");
         for(int i =0; i<26;i++)
 		{
             if(str.StartsWith(Convert.ToChar(i+(int)'a').ToString()))
@@ -160,12 +173,21 @@ public class GeneralWord
     public bool SearchWordInList(string word, int startLetterIndex)
 	{
         bool existsInList = false;
-        for(int i=0; i< alphabetList[startLetterIndex].Count;i++)
+        
+        Debug.Log("Find word " + word + " in list with of count + " + alphabetList[startLetterIndex].Count);
+        /*if (alphabetList[startLetterIndex].Exists(element => element == word))
+        {
+            existsInList = true;
+        }*/
+        for(int i=0;i<alphabetList[startLetterIndex].Count;i++)
 		{
-            if(word.Equals(alphabetList[startLetterIndex][i]))
+            alphabetList[startLetterIndex][i].Trim();
+            Debug.Log(alphabetList[startLetterIndex][i]);
+            if(word == alphabetList[startLetterIndex][i])
 			{
                 existsInList = true;
 			}
+
 		}
         return existsInList;
 	}
